@@ -1,0 +1,26 @@
+<use name="rootrflx"/>
+<use name="clhep"/>
+
+<use name="DataFormats/EgammaCandidates"/>
+<use name="CommonTools/UtilAlgos"/>
+
+<use name="FWCore/Framework"/>
+<use name="FWCore/PluginManager"/>
+<use name="FWCore/ParameterSet"/>
+<use name="FWCore/Common"/>
+<use name="PhysicsTools/Utilities"/>
+<use name="JetMETCorrections/Objects"/>
+<use name="JetMETCorrections/Modules"/>
+<use name="JetMETCorrections/Algorithms"/>
+<use name="HLTrigger/HLTcore"/>
+
+<use   name="DataFormats/VertexReco" />
+<use   name="root"/>
+<use   name="FWCore/ServiceRegistry"/>
+<use   name="SimDataFormats/PileupSummaryInfo"/>
+<use   name="CommonTools/Utils"/>
+<use   name="CommonTools/UtilAlgos"/>
+<use   name="DataFormats/PatCandidates" />
+<use   name="EGamma/EGammaAnalysisTools" />
+
+<flags EDM_PLUGIN="1"/>

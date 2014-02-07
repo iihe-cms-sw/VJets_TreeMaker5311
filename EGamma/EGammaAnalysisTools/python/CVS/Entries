@@ -1,0 +1,10 @@
+/.cvsignore/1.1/Sat Aug 11 14:36:48 2012//TbeforePFIsoEst_migration
+/doubleElectronHLTMatching_cfi.py/1.1/Wed Apr  4 14:28:23 2012//TbeforePFIsoEst_migration
+/doublePATElectronHLTMatching_cfi.py/1.1/Fri Nov 23 10:22:42 2012//TbeforePFIsoEst_migration
+/doublePhotonHLTMatching_cfi.py/1.1/Wed Apr  4 14:28:23 2012//TbeforePFIsoEst_migration
+/electronHLTMatching_cfi.py/1.2/Tue Apr 17 17:13:43 2012//TbeforePFIsoEst_migration
+/electronIsoProducer_cfi.py/1.2/Wed May 16 18:22:26 2012//TbeforePFIsoEst_migration
+/electronRegressionEnergyProducer_cfi.py/1.1/Tue Oct  2 00:42:54 2012//TbeforePFIsoEst_migration
+/photonHLTMatching_cfi.py/1.2/Tue Apr 17 17:13:43 2012//TbeforePFIsoEst_migration
+/photonIsoProducer_cfi.py/1.1/Wed Jun  6 12:58:42 2012//TbeforePFIsoEst_migration
+D

@@ -1,0 +1,27 @@
+imax 1
+jmax *
+kmax *
+-------------------------------
+shapes * * hzz2l2v__8TeV.root mumumjjq066/$PROCESS mumumjjq066/$PROCESS_$SYSTEMATIC
+-------------------------------
+bin 1
+Observation 4194.778379
+-------------------------------
+                                          bin      1      1      1      1 
+                                      process ewkll2j     vv    top    zll 
+                                      process      0      1      2      3 
+                                         rate 67.467161 2.115118 7.508393 4117.687707 
+-------------------------------
+                          lumi_8TeV        lnN 1.050000 1.050000 1.050000 1.050000 
+                          CMS_eff_m        lnN 1.030000 1.030000 1.030000 1.030000 
+                      QCDscale_ggVV        lnN      -      -      -      - 
+                        QCDscale_VV        lnN      -      -      -      - 
+                        XSec_sys_WW        lnN      -      -      -      - 
+                        XSec_sys_WZ        lnN      -      -      -      - 
+                     CMS_hzz2l2v_pu    shapeN2  1.000  1.000  1.000  1.000 
+CMS_hzz2l2v_stat_mumumjjq066_ewkll2j_8TeV    shapeN2  1.000      -      -      - 
+CMS_hzz2l2v_stat_mumumjjq066_top_8TeV    shapeN2      -      -  1.000      - 
+CMS_hzz2l2v_stat_mumumjjq066_vv_8TeV    shapeN2      -  1.000      -      - 
+CMS_hzz2l2v_stat_mumumjjq066_zll_8TeV    shapeN2      -      -      -  1.000 
+                          CMS_res_j    shapeN2  1.000  1.000  1.000  1.000 
+                        CMS_scale_j    shapeN2  1.000  1.000  1.000  1.000 

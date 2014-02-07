@@ -1,0 +1,8 @@
+EDM is above max tolerance 0.00118495  4.94473e-06
+EDM is above max tolerance 0.00306652  4.94473e-06
+
+ --- MaxLikelihoodFit ---
+Best fit r: 1  -1/+0.298713  (68% CL)
+nll S+B -> -15.6683  nll B -> -9.63041
+Done in 0.02 min (cpu), 0.02 min (real)
+Significance: 3.47501

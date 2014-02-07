@@ -1,0 +1,14 @@
+/ElectronTagger.cc/1.9/Fri Apr 19 19:00:07 2013//TV05-09-02
+/ElectronTaggerMLP.cc/1.4/Mon Apr 15 09:02:37 2013//TV05-09-02
+/ElectronTaggerMLP.h/1.3/Mon Apr 15 09:02:37 2013//TV05-09-02
+/LeptonSelector.cc/1.2/Thu Oct 18 14:21:19 2012//TV05-09-02
+/LeptonTaggerByIP.cc/1.5/Fri Feb 26 18:16:19 2010//TV05-09-02
+/LeptonTaggerByPt.cc/1.6/Fri Feb 26 18:16:19 2010//TV05-09-02
+/LeptonTaggerDistance.cc/1.4/Thu Jan 15 16:44:57 2009//TV05-09-02
+/MuonTagger.cc/1.9/Fri Apr 19 19:00:07 2013//TV05-09-02
+/MuonTaggerMLP.cc/1.4/Mon Apr 15 09:02:37 2013//TV05-09-02
+/MuonTaggerMLP.h/1.3/Mon Apr 15 09:02:37 2013//TV05-09-02
+/MuonTaggerNoIP.cc/1.6/Fri Feb 26 18:16:19 2010//TV05-09-02
+/MuonTaggerNoIPMLP.cc/1.2/Thu Apr 19 10:30:39 2007//TV05-09-02
+/MuonTaggerNoIPMLP.h/1.1/Tue Oct 31 02:53:09 2006//TV05-09-02
+D

@@ -1,0 +1,15 @@
+/EfficiencyFilter.h/1.21/Mon Jun 11 14:36:53 2012//THEAD
+/EfficiencyPtEtaFilter.h/1.5/Fri Jul 20 09:30:58 2012//THEAD
+/SelectionUtils.h/1.8/Mon May 21 09:55:07 2012//THEAD
+/ZanalyzerFilter.h/1.10/Tue Feb 14 11:06:25 2012//THEAD
+/ZanalyzerProducer.h/1.2/Sat Mar  3 17:23:05 2012//THEAD
+/ZpatFilter.h/1.5/Sat Mar  3 23:26:55 2012//THEAD
+/ZpatFilter2011.h/1.2/Mon May 21 09:55:17 2012//THEAD
+/ZpatFilterMu2011.h/1.1/Mon Jul 23 22:32:57 2012//THEAD
+/ZpatFilterPf.h/1.4/Thu Mar 29 17:54:59 2012//THEAD
+/goodEPairProducer2011.h/1.5/Mon Jul 23 22:31:54 2012//THEAD
+/goodEleProducer.h/1.1/Thu Apr 19 14:23:38 2012//THEAD
+/goodEleProducer2011.h/1.2/Mon May 21 09:55:28 2012//THEAD
+/pfAnalyzer.h/1.5/Wed Apr 25 10:06:55 2012//THEAD
+/photonRemoval.h/1.7/Wed Jul 11 13:14:59 2012//THEAD
+D

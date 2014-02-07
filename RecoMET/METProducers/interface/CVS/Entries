@@ -1,0 +1,12 @@
+/BeamHaloSummaryProducer.h/1.8/Fri May 20 17:17:30 2011//TV03-03-12-02
+/CSCHaloDataProducer.h/1.10/Fri May 20 18:43:39 2011//TV03-03-12-02
+/EcalHaloDataProducer.h/1.5/Fri May 20 17:17:30 2011//TV03-03-12-02
+/GlobalHaloDataProducer.h/1.6/Fri May 20 17:17:30 2011//TV03-03-12-02
+/HcalHaloDataProducer.h/1.5/Fri May 20 17:17:30 2011//TV03-03-12-02
+/HcalNoiseInfoProducer.h/1.14/Mon Feb 20 15:49:15 2012//TV03-03-12-02
+/METProducer.h/1.26/Fri May 20 17:17:30 2011//TV03-03-12-02
+/MinMETProducerT.h/1.1/Sat Sep 15 16:45:33 2012//TV03-03-12-02
+/MuonMET.h/1.1/Mon May 17 18:07:34 2010//TV03-03-12-02
+/MuonMETValueMapProducer.h/1.1/Mon May 17 18:07:34 2010//TV03-03-12-02
+/MuonTCMETValueMapProducer.h/1.5/Mon Feb 21 10:09:21 2011//TV03-03-12-02
+D
