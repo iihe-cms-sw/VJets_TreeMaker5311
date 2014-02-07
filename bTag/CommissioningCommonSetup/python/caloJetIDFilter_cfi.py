@@ -1,0 +1,26 @@
+import FWCore.ParameterSet.Config as cms
+
+caloJetIDFilter = cms.EDFilter("CaloJetIDFilter",
+  JetIDTag = cms.InputTag("ak5JetID"),
+  CaloJetsTag = cms.InputTag("ak5CaloJets"),
+  filter = cms.bool(True),
+  PtCuts = cms.vdouble(10.0, 1e6),
+  EtaCuts = cms.vdouble(-2.5, 2.5),
+  fHPDCuts = cms.vdouble(-1e6, 0.98),
+  fRBXCuts = cms.vdouble(-1e6, 1e6),
+  n90HitsCuts = cms.vint32(1, 1000000),
+  fSubDetector1Cuts = cms.vdouble(-1e6, 1e6),
+  fSubDetector2Cuts = cms.vdouble(-1e6, 1e6),
+  fSubDetector3Cuts = cms.vdouble(-1e6, 1e6),
+  fSubDetector4Cuts = cms.vdouble(-1e6, 1e6),
+  EMFCuts = cms.vdouble(0.01, 1e6),
+  RestrictedEMFCuts = cms.vdouble(-1e6, 1e6),
+  nHCALTowersCuts = cms.vint32(-1000000, 1000000),
+  nECALTowersCuts = cms.vint32(-1000000, 1000000),
+  ApproximatefHPDCuts = cms.vdouble(-1e6,1e6),
+  ApproximatefRBXCuts = cms.vdouble(-1e6, 1e6),
+  hitsInN90Cuts = cms.vint32(-1000000, 1000000),
+  numberOfHits2RPCCuts = cms.vint32(-1000000, 1000000),
+  numberOfHits3RPCCuts = cms.vint32(-1000000, 1000000),
+  numberOfHitsRPCCuts = cms.vint32(-1000000, 1000000)
+)

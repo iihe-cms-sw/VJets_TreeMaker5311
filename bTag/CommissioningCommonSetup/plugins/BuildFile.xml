@@ -1,0 +1,29 @@
+<use   name="MagneticField/Engine"/>
+<use   name="CommonTools/Utils"/>
+<use   name="HLTrigger/HLTcore"/>
+<use   name="DataFormats/BTauReco"/>
+<use   name="DataFormats/GeometryCommonDetAlgo"/>
+<use   name="DataFormats/JetReco"/>
+<use   name="DataFormats/Math"/>
+<use   name="DataFormats/TrackReco"/>
+<use   name="DataFormats/VertexReco"/>
+<use   name="DataFormats/MuonReco"/>
+<use   name="DataFormats/BeamSpot"/>
+<use   name="TrackingTools/IPTools"/>
+<use   name="TrackingTools/TransientTrack"/>
+<use   name="TrackingTools/Records"/>
+<use   name="TrackingTools/PatternTools"/>
+<use   name="SimDataFormats/JetMatching"/>
+<use   name="SimDataFormats/PileupSummaryInfo"/>
+<use   name="SimDataFormats/Track"/>
+<use   name="SimDataFormats/Vertex"/>
+<use   name="SimDataFormats/GeneratorProducts"/>
+<use   name="FWCore/Framework"/>
+<use   name="FWCore/PluginManager"/>
+<use   name="FWCore/ParameterSet"/>
+<use   name="RecoBTau/JetTagComputer"/>
+<use   name="RecoBTag/SecondaryVertex"/>
+<use   name="clhep"/>
+<library    file="*.cc" name="bTagCommissioningCommonSetupPlugins">
+  <flags EDM_PLUGIN="1"/>
+</library>

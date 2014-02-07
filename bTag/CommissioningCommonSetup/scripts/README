@@ -1,0 +1,38 @@
+--------------------------------
+Python scripts:
+--------------------------------
+Canvas.py       : Contains Canvas class
+CommonSetup.py  : Contains common style, plot title, format, rebin, draw methods
+
+NormoverlayMCData.py         : Script to plot IP, SV, SL TagInfos and jet plots. bDown(b first, then charm, then light) is the default flavour stacking order.
+jetTags_NormoverlayMCData.py : Script to plot all the discriminators. bUp(light first, then charm, then bottom) is the default flavour stacking order.
+
+Profileplot.py   : Script to plot Profile plots.
+TrackQualplot.py : Script to plot IP TagInfo plots by track quality (Loose, Tight, High purity).
+
+--------------------------------
+Shell scripts:
+--------------------------------
+allnormcompare.sh : Plots all the IP, SV, SL TagInfos and jet plots normalized by area and lumi for different categories (standardPF, standardCalo) and bins (GLOBAL, PT10-20 etc).
+discPlots.sh      : Plots all the discriminators normalized by area and lumi for different categories (standardPF, standardCalo) and bins (GLOBAL, PT10-20 etc).
+
+profilePlots.sh : Plots all the profile plots normalized by area and lumi for different categories (standardPF, standardCalo) and bins (GLOBAL, PT10-20 etc).
+trackQual.sh    : Plots all the IP TagInfo track quality plots normalized by area and lumi for different categories (standardPF, standardCalo) and bins (GLOBAL, PT10-20 etc).
+
+--------------------------------
+Usage:
+--------------------------------
+(1) Copy the DQM outputs for data and QCD MC samples and name them as:
+	DATA:            data.root
+	QCDDijetpt0-15:  MC_QCD_Pt_0_15.root  
+	QCDDijetpt15-20: MC_QCD_Pt_15_20.root  
+	QCDDijetpt20-30: MC_QCD_Pt_20_30.root  
+	QCDInclpt30:     MC_QCD_Pt_30.root  
+
+(2) Then setup ROOT or CMSSW version and make the plots using:
+	./allnormcompare.sh
+	./discPlots.sh
+	./profilePlots.sh
+	./trackQual.sh
+
+--------------------------------

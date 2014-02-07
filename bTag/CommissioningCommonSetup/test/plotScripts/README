@@ -1,0 +1,64 @@
+Compile the plotting executable in the following way:
+
+The executable is designed to be compiled once the user types "scram b".  Thus,
+no additional work is needed.  If any changes are made to the executable or the
+supporting classes, these changes can also be compiled using "scram b".  The executable,
+called BTagCommissioningPlotMaker, will automatically be placed in the execution path.
+
+then run the macro from the shell:
+
+To retrieve the list of the commands for the executable, just type
+
+BTagCommissioningPlotMaker --help
+
+An example of the resulting output is given below.
+
+$ BTagCommissioningPlotMaker --help
+Getting options...Allowed options:
+  --help                Produce help message and exit.
+  --inputMCFiles arg    Name of input file listing MC files with weights.
+  --inputDataFiles arg  Name of input file listing Data files with weights.
+  --plotsFile arg       Name of input file listing plots to be made.
+  --finalNorm arg       Normalization of plots (lumi norm. = 1, area norm. w/o 
+                        overflow = 0, area norm w/ overflow = -1).
+  --outputFile arg      Name of output ROOT file [default = plots.root].
+  --integratedLumi arg  The integrated luminosity in the input data files.
+  --dataVsMC arg        1 = compare data to MC, 0 = compare data to data 
+                        [default = 1].
+  --plotName arg        Name of plot to produce [leave unspecified to produce 
+                        all plots]
+  --firstPlot arg       (w/ lastPlot) Denotes the range of plots in plotsFile 
+                        to be produced [leave unspecified to start w/ first 
+                        plot]
+  --lastPlot arg        (w/ firstPlot) Denotes the range of plots in plotsFile 
+                        to be produced [leave unspecified to end w/ last plot]
+
+
+for lumi normalization:
+BTagCommissioningPlotMaker --inputMCFiles filelistMC.cfg --inputDataFiles filelistData.cfg --plotsFile plot.cfg --finalNorm 1 --outputFile plots.root --integratedLumi intLumi --dataVsMC dataVsmc --plotName plotname --firstPlot firstPlot --lastPlot lastPlot
+
+for area normalization WITHOUT overflow bins:
+BTagCommissioningPlotMaker --inputMCFiles filelistMC.cfg --inputDataFiles filelistData.cfg --plotsFile plot.cfg --finalNorm 0 --outputFile plots.root --integratedLumi intLumi --dataVsMC dataVsmc --plotName plotname --firstPlot firstPlot --lastPlot lastPlot
+
+for area normalization WITH overflow bins:
+BTagCommissioningPlotMaker --inputMCFiles filelistMC.cfg --inputDataFiles filelistData.cfg --plotsFile plot.cfg --finalNorm -1 --outputFile plots.root --integratedLumi intLumi --dataVsMC dataVsmc --plotName plotname --firstPlot firstPlot --lastPlot lastPlot
+
+where filelistMC.cfg and filelistData.cfg are the list of files to read including their weight, separated by a comma.
+
+Example list of files:
+/nfs/data6/alschmid/btagCommissioning/files/MC_QCDPt20_30/BTagCommissioning2010_April20_7TeV_MC_13_1.root,1
+/nfs/data6/alschmid/btagCommissioning/files/MC_QCDPt20_30/BTagCommissioning2010_April20_7TeV_MC_14_1.root,1
+
+(the weight is 1 in this case)
+
+
+plots.root is the output root file containing some histograms (optional)
+
+intLumi is the data integrated luminosity used in the header of the canvas
+
+Set dataVsmc to 1 to do Data vs MC comparisons and to 0 for Data vs Data comparisons.
+
+plotname is the name of the plot to be produced (optional) or give additional two arguments firstPlot and lastPlot:
+
+firstPlot and lastPlot are integers denoting the number of the first and the last plot in the plot.cfg to be produced. The counting starts at 1.
+

@@ -1,0 +1,19 @@
+2010-12-17  Jyothsna Rani Komaragiri  <jyothsna@cern.ch>
+	* Tagged V02-02-00 Contains config files both for Data and MC to run over AODSIM files apart from RECO.
+
+2010-12-15  Jyothsna Rani Komaragiri  <jyothsna@cern.ch>
+	* Tagged V02-01-00  Contains the ntuplizer code and config files relevant only for running over RECO files
+	
+2010-10-26  Jyothsna Rani Komaragiri  <jyothsna@cern.ch>
+	* Tagged V02-00-00  First tag of ntuplizer ported for 38X
+	* TagNtupleProducer.cc :: Removed hardcoded trigger selection and added BTagMu triggers present in 2E31 menu in the ntuplizer.
+	* Ported config files validation_StandardPFJetsOnly_Data.py and validation_StandardPFJetsOnly_MC.py and they contain following changes:
+		* Make use of the TriggerResultsFilter for trigger selection
+		* First apply loose PF JetID and then 38X JEC	
+		* Added 38X JEC constants (not picked from ConfDB)
+		* Removed L1 Tech trigger selection based on bits 40, 41, 36 to 39 etc...
+		* Removed DQM related config snippets
+	
+2010-10-25  Jyothsna Rani Komaragiri  <jyothsna@cern.ch>
+	* nTuplizer version for 36X processing is tagged as "ntuple36Xtag"
+

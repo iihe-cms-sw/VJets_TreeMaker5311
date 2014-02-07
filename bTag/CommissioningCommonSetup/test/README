@@ -1,0 +1,31 @@
+Shared/mixed hits related variables dumped into the ntuple need rechits which are available only in RECO dataformat and not in AODSIM. The config 
+files below provide the necessary switch to tun this shared hit info ON for RECO and OFF for AODSIM.
+
+Config files to run on AODSIM files:
+AODSIM_validation_StandardPFJetsOnly_Data.py
+AODSIM_validation_StandardPFJetsOnly_MC.py
+
+Config files to run on RECO files:
+validation_StandardPFJetsOnly_Data.py
+validation_StandardPFJetsOnly_MC.py
+_________________________________________________________________________
+
+SmearedJets directory contains config files related the jet direction smearing.
+
+AODSIM MC config file:
+SmearedJets/AODSIM_validation_StandardPFJetsOnly_SmearedJets_MC.py
+
+RECO config files for data and MC:
+SmearedJets/validation_StandardPFJetsOnly_SmearedJets_Data.py
+SmearedJets/validation_StandardPFJetsOnly_SmearedJets_MC.py
+
+_________________________________________________________________________
+
+SVTrackSelection directory contains config files with loose SV track selection dR(track, jet) < 0.6
+
+These are also slightly OLD config files.
+
+_________________________________________________________________________
+
+PASConfigs directory contains OLD config files with different alignment scenarios.
+_________________________________________________________________________
