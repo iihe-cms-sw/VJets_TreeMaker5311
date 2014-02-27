@@ -59,6 +59,7 @@ class DataAnalyzer : public edm::EDAnalyzer
         virtual void analyze( const edm::Event &iEvent, const edm::EventSetup &iSetup) ;
 
     private:
+
         //  keep all GEN
         bool keepFullGenInfo_,storeAllPF_;
 
@@ -152,6 +153,7 @@ void DataAnalyzer::beginRun(const edm::Run & iRun, const edm::EventSetup & iSetu
 //
 void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetup) 
 {
+    bool DEBUG(0);
     bool isData=event.isRealData();
 
     //event summary to be filled
@@ -161,7 +163,7 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
     ev.run    = event.id().run();
     ev.lumi   = event.luminosityBlock();
     ev.event  = event.id().event();
-
+    if ( DEBUG ) cout << " Event: " <<  ev.event << endl;
     //filter bits
     ev.f_bits=0;
     std::vector<string> filts=analysisCfg_.getParameter<std::vector<string> >("metFilters");
@@ -226,17 +228,19 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
         event.getByLabel(analysisCfg_.getParameter<edm::InputTag>("genSource"), genParticlesH);
 
         //analyze first hard process
-        bool isSherpa(false);     
+        bool isSherpa(false);
         for(size_t i = 0; i < genParticlesH->size(); ++ i)
         {
             const reco::GenParticle & p = dynamic_cast<const reco::GenParticle &>( (*genParticlesH)[i] );
+            if (  DEBUG && (p.pdgId() == 11 ||  p.pdgId() == 13 || p.pdgId() == 15 ) && p.status() == 1 ) cout << " genSt1 " << p.pdgId() <<"   " << p.mother()->pdgId() <<"  " << p.pt() << "    " << p.eta()<< "  mother is "<< p.mother()->pdgId() << endl;
+            if (  DEBUG && (p.pdgId() == 11 ||  p.pdgId() == 13 || p.pdgId() == 15 ) && p.status() == 3 ) cout << " genSt3 " << p.pdgId() <<"   " << p.mother()->pdgId() <<"  " << p.pt() << "    " << p.eta()<< "  mother is "<< p.mother()->pdgId() << endl;
             if(abs(p.pdgId())==2212 && p.status()==4) isSherpa=true; //this is only used by sherpa
             bool isHardProc(p.status()==3);
-            bool isStableOfInterest( keepFullGenInfo_ && p.status()==1 && ((abs(p.pdgId())==22 && p.pt()>20) || (p.charge()!=0 && p.pt()>0.5 && fabs(p.eta())<3.0 )) );
+            bool isStableOfInterest( keepFullGenInfo_ && p.status()==1 && ((abs(p.pdgId())==22 && p.pt()>20) || (p.charge()!=0 && p.pt()>0.1 && fabs(p.eta())<3.0 )) );
             if(!isHardProc && !isStableOfInterest) continue;
 
             //check if lepton is ok to accept (for unfolding purposes)
-            bool passLepAccCut( p.charge()!=0 &&  p.pt()>0.5 && fabs(p.eta())<3.0 );
+            bool passLepAccCut( p.charge()!=0 &&  p.pt()>0.1 && fabs(p.eta())<3.0 );
             bool leptonIsOkToAccept(isHardProc && abs(p.pdgId())>=11 && abs(p.pdgId())<=14);
             if( leptonIsOkToAccept )
             {
@@ -255,22 +259,18 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
             nHardProcGenLeptons += leptonIsOkToAccept;
             nHardProcGenBosons  += (isHardProc && (abs(p.pdgId())==24 || abs(p.pdgId())==23));
 
-
             ev.mc_id[ev.mcn]=p.pdgId();
             ev.mc_status[ev.mcn]=p.status();
             if(  p.numberOfMothers()  == 1 ) ev.mc_mother[ev.mcn]=p.mother()->pdgId();
             else if(  p.numberOfMothers()  == 2 ) ev.mc_mother[ev.mcn]=p.mother(0)->pdgId();
             else ev.mc_mother[ev.mcn] = 0 ;
-            ev.mc_mother[ev.mcn] = 0 ;
+//            cout << ev.mc_mother[ev.mcn] << "   " << ev.mc_id[ev.mcn] << endl;
             ev.mc_px[ev.mcn]=p.px();
             ev.mc_py[ev.mcn]=p.py();
             ev.mc_pz[ev.mcn]=p.pz();
             ev.mc_en[ev.mcn]=p.energy();
             ev.mc_lxy[ev.mcn]=0;
-
-
-
-
+            if (  (p.pdgId() == 11 ||  p.pdgId() == 13 ) && p.status() == 1 && ( abs(p.mother()->pdgId()) == abs(p.pdgId()) ||  p.mother()->pdgId() == 23 ) ) cout <<  ev.event <<"   " << " gen Lep : " << p.pdgId() <<"  mother ID  " << p.mother()->pdgId()<<"   " << p.pt() << "   " << p.eta()<< endl;
             //check if photon is prompt or radiated from quark/line
             if(fabs(p.pdgId())==22)
             {
@@ -288,6 +288,7 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
         }
 
         // FSR photons (if full gen info is set to true)
+        // trying to keep only those around status 1 leptons
         if(keepFullGenInfo_)
         {
             int NGenPart = ev.mcn ;
@@ -296,10 +297,11 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
                 const reco::GenParticle & p = dynamic_cast<const reco::GenParticle &>( (*genParticlesH)[i] );
                 if (!(abs(p.pdgId()) == 22 && p.pt() <= 20 &&  p.pt() > 1e-6 ) ) continue ;  // cut to cover the missing phase space
                 for(int j = 0; j < NGenPart; j++ ){
-                    if ( fabs(ev.mc_status[j]) != 1 && fabs(ev.mc_status[j]) != 3 ) continue; 
+                    //if ( fabs(ev.mc_status[j]) != 1 && fabs(ev.mc_status[j]) != 3 ) continue; 
+                    if ( fabs(ev.mc_status[j]) != 1  ) continue; 
                     if(fabs(ev.mc_id[j]) != 11 && fabs(ev.mc_id[j]) != 13 ) continue;
                     LorentzVector p4(ev.mc_px[j],ev.mc_py[j], ev.mc_pz[j], ev.mc_en[j]);
-                    if( deltaR( p4.eta(), p4.phi(), p.eta(), p.phi()) > 0.15) continue;
+                    if( deltaR( p4.eta(), p4.phi(), p.eta(), p.phi()) > 0.25) continue;
                     ev.mc_id[ev.mcn]=p.pdgId();
                     ev.mc_status[ev.mcn]=p.status();
                     if(  p.numberOfMothers()  == 1 ) ev.mc_mother[ev.mcn]=p.mother()->pdgId();
@@ -310,11 +312,26 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
                     ev.mc_pz[ev.mcn]=p.pz();
                     ev.mc_en[ev.mcn]=p.energy();
                     ev.mc_lxy[ev.mcn]=0;
+                    //check if photon is prompt or radiated from quark/line
+                    if(fabs(p.pdgId())==22)
+                    {
+                        bool isPrompt(false);
+                        for(size_t b = 0; b < p.numberOfMothers(); ++ b)
+                        {
+                            const reco::Candidate *p_m = p.mother(b);
+                            if(abs(p_m->pdgId())>25) continue;
+                            isPrompt=true;
+                        }
+                        if(!isPrompt) ev.mc_lxy[ev.mcn]=99999.;
+                    }
+
                     ev.mcn++;
+                    continue ; 
                 }
             }
         }
 
+        
         //heavy flavors
         for (size_t i=0; i<genParticlesH->size(); i++)
         {
@@ -347,13 +364,14 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
                     if(gd==newGd) break;
                     gd=newGd;
                 }
-
                 float vxMother(p.vx()),     vyMother(p.vy());
                 float vxDaughter(gd->vx()), vyDaughter(gd->vy());
-
                 //save B-hadron information
                 ev.mc_id[ev.mcn]     = d->pdgId();
                 ev.mc_status[ev.mcn] = d->status();
+                if(  p.numberOfMothers()  == 1 ) ev.mc_mother[ev.mcn]=p.mother()->pdgId();
+                else if(  p.numberOfMothers()  == 2 ) ev.mc_mother[ev.mcn]=p.mother(0)->pdgId();
+                else ev.mc_mother[ev.mcn] = 0 ;
                 ev.mc_px[ev.mcn]     = d->px();  
                 ev.mc_py[ev.mcn]     = d->py();  
                 ev.mc_pz[ev.mcn]     = d->pz(); 
@@ -428,7 +446,7 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
     edm::Handle<reco::ConversionCollection> convH;
     event.getByLabel( analysisCfg_.getParameter<edm::InputTag>("conversionSource"), convH);
     EcalClusterLazyTools egLazyTool( event, iSetup, analysisCfg_.getParameter<edm::InputTag>("ebrechitsSource"), analysisCfg_.getParameter<edm::InputTag>("eerechitsSource") );
-
+    cout << " begin  " <<  ev.ln <<"   "<<ev.egn<< endl;
     for(size_t imu=0; imu< muH->size(); ++imu)
     {
         reco::CandidatePtr muonPtr    = muH->ptrAt(imu);
@@ -528,16 +546,22 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
         if(muon->pt()>18) nMuons++;
     }
 
+    // now lets go to the electrons
+    edm::Handle<reco::GsfElectronCollection> gsfEleH;
+    event.getByLabel( "gsfElectrons", gsfEleH );
+
     for(size_t iele=0; iele< eH->size(); ++iele)
     {
         reco::CandidatePtr elePtr       = eH->ptrAt(iele);
         const pat::Electron *ele        = dynamic_cast<const pat::Electron *>( elePtr.get() );
         const reco::Candidate *genLep   = ele->genLepton();
         const reco::GsfElectron *gsfEle = dynamic_cast<const reco::GsfElectron *>(ele);
+        reco::GsfElectronRef gsfele(gsfEleH, ele->originalObjectRef().key());
 
         //pre-selection
         if(ele->gsfTrack().isNull() || ele->superCluster().isNull() || gsfEle==0) continue;
         if(ele->pt()<10 || !(ele->isEB() || ele->isEE()) )                        continue;
+
         bool overlapFound(false);
         for(int ilep=0; ilep<ev.ln; ilep++)
         {
@@ -579,17 +603,36 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
         ev.ln_ecalIso04[ev.ln]                  = ele->dr04EcalRecHitSumEt();
         ev.ln_hcalIso04[ev.ln]                  = ele->dr04HcalTowerSumEt();
         ev.ln_trkIso04[ev.ln]                   = ele->dr04TkSumPt();
-        eIsolator03_.fGetIsolation(gsfEle, &(*pfH), primVtx, vtxH);
-        ev.ln_gIso03[ev.ln]                     = eIsolator03_.getIsolationPhoton();
-        ev.ln_chIso03[ev.ln]                    = eIsolator03_.getIsolationCharged();
-        ev.ln_puchIso03[ev.ln]                  = 0;
-        ev.ln_nhIso03[ev.ln]                    = eIsolator03_.getIsolationNeutral();
+        // the below lines for isolation are identical to 
+        // https://twiki.cern.ch/twiki/bin/viewauth/CMS/EgammaPFBasedIsolation#for_PAT_electron_users_using_sta
+        // EgammaCutBasedEleId::IsoDepositVals electronIsoValPFId(3);
+        // event.getByLabel("elPFIsoValueCharged03NoPFIdPFlowPFIso", electronIsoValPFId[0]);
+        // event.getByLabel("elPFIsoValueGamma03NoPFIdPFlowPFIso", electronIsoValPFId[1]);
+        // event.getByLabel("elPFIsoValueNeutral03NoPFIdPFlowPFIso", electronIsoValPFId[2]);
+        // charged_.push_back( (*(*electronIsoVals)[0])[el.originalObjectRef()]);
+        // photon_.push_back( (*(*electronIsoVals)[1])[el.originalObjectRef()]);
+        // neutral_.push_back( (*(*electronIsoVals)[2])[el.originalObjectRef()]);
+        // this should be the same as in EGamma
+        ev.ln_gIso03[ev.ln]     = ele->photonIso(); 
+        ev.ln_chIso03[ev.ln]    = ele->chargedHadronIso();
+        ev.ln_puchIso03[ev.ln]  = ele->puChargedHadronIso();
+        ev.ln_nhIso03[ev.ln]    = ele->neutralHadronIso();
+
+        // lines below access are original in the code
+        /*        eIsolator03_.fGetIsolation(gsfEle, &(*pfH), primVtx, vtxH);
+                  ev.ln_gIso03[ev.ln]                     = eIsolator03_.getIsolationPhoton();
+                  ev.ln_chIso03[ev.ln]                    = eIsolator03_.getIsolationCharged();
+                  ev.ln_puchIso03[ev.ln]                  = 0;
+                  ev.ln_nhIso03[ev.ln]                    = eIsolator03_.getIsolationNeutral();
+                  */
+        // lines below should also be changed -- but not used with offical EGamma ID 
         eIsolator04_.fGetIsolation(gsfEle, &(*pfH), primVtx, vtxH);
         ev.ln_gIso04[ev.ln]                     = eIsolator04_.getIsolationPhoton();
         ev.ln_chIso04[ev.ln]                    = eIsolator04_.getIsolationCharged();
         ev.ln_puchIso04[ev.ln]                  = 0;
         ev.ln_nhIso04[ev.ln]                    = eIsolator04_.getIsolationNeutral();
-        ev.egn_isConv[ev.egn]                   = ConversionTools::hasMatchedConversion(*gsfEle,convH,beamSpotH->position());
+        //ev.egn_isConv[ev.egn]                   = ConversionTools::hasMatchedConversion(*gsfele,convH,beamSpotH->position()) ; // 
+        ev.egn_isConv[ev.egn]                   = ConversionTools::hasMatchedConversion(*gsfEle,convH,beamSpotH->position()); // this is wrong
         ev.egn_eopin[ev.egn]                    = ele->eSuperClusterOverP(); 
         ev.egn_eopout[ev.egn]                   = ele->eEleClusterOverPout();
         ev.egn_sce[ev.egn]                      = ele->superCluster()->energy();
@@ -607,27 +650,52 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
         ev.egn_dphiin[ev.egn]                   = ele->deltaPhiSuperClusterTrackAtVtx();
         ev.egn_detain[ev.egn]                   = ele->deltaEtaSuperClusterTrackAtVtx();
         ev.egn_ooemoop[ev.egn]                  = (1.0/ele->ecalEnergy() - ele->eSuperClusterOverP()/ele->ecalEnergy());
-
+        cout << " eta check "<< ev.egn << "   " << ev.ln << " now etas" << ele->gsfTrack()->eta() << "   " << ele->superCluster()->eta() << endl;
         //save id summary
         bool hasVetoId(false);
         ev.ln_idbits[ev.ln] = 
             (ele->ecalDrivenSeed()                                                                                  << 0)
             | ( ele->trackerDrivenSeed()                                                                            << 1)
             | ( EgammaCutBasedEleId::PassEoverPCuts(ev.egn_sceta[ev.egn],ev.egn_eopin[ev.egn],ev.egn_fbrem[ev.egn]) << 2);
-
+        bool passesMediumID(0);
         for(size_t iid=0; iid<4; iid++)
         {
             int id(EgammaCutBasedEleId::VETO);
             if(iid==1) id=EgammaCutBasedEleId::LOOSE;
             if(iid==2) id=EgammaCutBasedEleId::MEDIUM;
             if(iid==3) id=EgammaCutBasedEleId::TIGHT;
-            bool hasId=EgammaCutBasedEleId::PassWP( EgammaCutBasedEleId::WorkingPoint(id), ele->isEB(), ele->pt(), ele->eta(), 
+            
+            // implentation of ID using info stored in PAT collection -- Should not be used ?
+            bool hasId1=EgammaCutBasedEleId::PassWP( EgammaCutBasedEleId::WorkingPoint(id), ele->isEB(), ele->pt(), ele->eta(), 
                     ev.egn_detain[ev.egn], ev.egn_dphiin[ev.egn], ev.egn_sihih[ev.egn], ev.egn_hoe[ev.egn], ev.egn_ooemoop[ev.egn], 
                     ev.ln_d0[ev.ln], ev.ln_dZ[ev.ln], 
                     0., 0., 0., ev.egn_isConv[ev.egn], ev.ln_trkLostInnerHits[ev.ln], *rho);
+                    
+            // hasId -- I think this is the implemntation from EGamma ????
+            bool  hasId = EgammaCutBasedEleId::PassWP( EgammaCutBasedEleId::WorkingPoint(id) , gsfele, convH, *beamSpotH, vtxH, (const double) 0,    (const double) 0, (const double) 0, *rho);
             if(iid==0) hasVetoId=hasId;
+            if ( DEBUG ) cout << " reco Ele " << hasId<<"  " <<ele->pt()<<"   "<<  ele->eta() << endl;
+            /*
+            if ( hasId != hasId1 ) {
+                cout << hasId <<"   " << hasId1 << endl;
+                 cout<<"GSF: PAT: kin " << ele->isEB()<<"   " <<  ele->pt()<<"   " << ele->eta() << endl;
+                cout<<"GSF: PAT: deltaEta "<<gsfele->deltaEtaSuperClusterTrackAtVtx()<<" "<<ele->deltaEtaSuperClusterTrackAtVtx()<<"   " << ev.egn_detain[ev.egn] << endl;
+                cout<<"GSF: PAT: deltaPhi "<<gsfele->deltaPhiSuperClusterTrackAtVtx()<<" "<<ele->deltaPhiSuperClusterTrackAtVtx()<<"    " << ev.egn_dphiin[ev.egn]<< endl;
+                cout<<"GSF: PAT: Sihih "<<gsfele->sigmaIetaIeta()<<" "<<ele->sigmaIetaIeta()<<"   " << ev.egn_sihih[ev.egn] << endl;
+                cout<<"GSF: PAT: hadronicOverEm "<<gsfele->hadronicOverEm()<<" "<<ele->hadronicOverEm()<<"   " << ev.egn_hoe[ev.egn] <<endl;
+                cout<<"GSF: PAT: 1/E- 1/p "<<(1.0/gsfele->ecalEnergy() - gsfele->eSuperClusterOverP()/gsfele->ecalEnergy())<<" "<<(1.0/ele->ecalEnergy() - ele->eSuperClusterOverP()/ele->ecalEnergy())<<"   " << ev.egn_ooemoop[ev.egn] <<endl;
+                cout<<"GSF: PAT: D0 "<<(fabs(gsfele->gsfTrack()->dxy(primVtx->position())))<<" "<<(fabs(ele->gsfTrack()->dxy(primVtx->position())))<<"    " << ev.ln_d0[ev.ln] <<endl;
+                cout<<"GSF: PAT: Dz "<<(fabs(gsfele->gsfTrack()->dz(primVtx->position())))<<" "<<(fabs(ele->gsfTrack()->dz(primVtx->position())))<<"    " <<  ev.ln_dZ[ev.ln] << endl;
+                cout<<"GSF: PAT: Conv "<<ConversionTools::hasMatchedConversion(*gsfEle,convH,beamSpotH->position()) <<"    " << ev.egn_isConv[ev.egn] << "    " << ConversionTools::hasMatchedConversion(*gsfele,convH,beamSpotH->position()) << endl;
+                cout<<"GSF: PAT: MHits "<<(gsfele->gsfTrack()->trackerExpectedHitsInner().numberOfLostHits() )<< " "<<(gsfele->gsfTrack()->trackerExpectedHitsInner().numberOfLostHits() )<<"    " << endl;
+                cout<<"GSF: PAT: Bool"<<hasId1<<" "<<hasId<<endl<<endl<<endl;
+                cout<<"GSF: PAT: rho"<< *rho << endl;
+            }
+            */
+            if ( iid == 2 && hasId ) passesMediumID = true ;
             ev.ln_idbits[ev.ln] |=  (hasId << (3+iid));
         }
+        if ( DEBUG ) cout << "electrons: " << ele->pt()<< "   " << ele->eta()<<"    " << ele->photonIso() <<"  " << ele->chargedHadronIso() << "   " <<  ele->puChargedHadronIso() <<"   " << ele->neutralHadronIso() << "  ID: " <<passesMediumID  << endl; 
         for(size_t iid=0; iid<2; iid++)
         {
             int id(EgammaCutBasedEleId::TRIGGERTIGHT);
@@ -668,8 +736,6 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
     int nPhotons(0);
     edm::Handle<edm::View<reco::Candidate> > photonH;
     event.getByLabel( analysisCfg_.getParameter<edm::InputTag>("photonSource"), photonH );
-    edm::Handle<reco::GsfElectronCollection> gsfEleH;
-    event.getByLabel( "gsfElectrons", gsfEleH );
     for(size_t ipho=0; ipho<photonH->size(); ipho++)
     {
         const reco::Photon *pho = dynamic_cast<const reco::Photon *>( photonH->ptrAt(ipho).get() );
@@ -760,7 +826,7 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
         toSave=true;
         break;
     }
-
+   // cout << " vector bosons : " << nHardProcGenLeptons << "   " << nHardProcGenBosons <<"    " << nHardProcGenBosons << endl;
     if(!isData && nHardProcGenLeptons>0 && nHardProcGenBosons>0 && keepFullGenInfo_) toSave=true; 
     if(!toSave) return;
 
@@ -793,6 +859,9 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
     {
         edm::RefToBase<pat::Jet> jetRef(edm::Ref<pat::JetCollection>(jetH,ijet));
         const pat::Jet *jet              = &((*jetH)[ijet]);
+
+        if(jet->pt()<10 || fabs(jet->eta())>4.7 /*|| !passLooseId*/) continue;
+
         const reco::Candidate *genParton = jet->genParton();
         const reco::GenJet *genJet       = jet->genJet();
 
@@ -812,8 +881,6 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
             passMediumId &= (chf>0 && nch>0 && cef<0.99);
             passTightId  &= (chf>0 && nch>0 && cef<0.99);
         }
-        if(jet->pt()<10 || fabs(jet->eta())>4.7 /*|| !passLooseId*/) continue;
-
         //save information
         ev.jn_px[ev.jn]          = jet->px();
         ev.jn_py[ev.jn]          = jet->py();
@@ -907,6 +974,7 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
         ev.jn_puMVA[ev.jn]       = puIdentifier.mva();
         ev.jn_qgMVA[ev.jn]       = qgTaggerH.isValid() ? (*qgTaggerH)[jetRef] : 0;
 
+        if ( DEBUG ) cout << " reco Jets:  " << jet->pt() <<"  " << jet->eta() << "   " << passLooseId + passMediumId + passTightId << "   " << uint(cutBasedPuIdentifier.idFlag() & 0xf) << endl;
         //save pf constituents (only for jets with pT>20 in the central region)
         ev.jn_pfstart[ev.jn]=-1;
         ev.jn_pfend[ev.jn]=-1;
@@ -954,14 +1022,30 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
         event.getByLabel("ak5GenJetsNoNu",genJetsHandle);
         const reco::GenJetCollection* genJetColl = &(*genJetsHandle);
         reco::GenJetCollection::const_iterator gjeti = genJetColl->begin();
+        if ( DEBUG ) cout << " to gen jets:"<< endl;
         for(; gjeti!=genJetColl->end();gjeti++){
             reco::GenParticle gjet = *gjeti;
-            //if(gjet.pt()<=5||gjet.eta()>2.5)continue;
             if(gjet.pt()<=10)continue;
+            cout << " gen jet :" << ev.jnUnf << " Pt  " << gjet.pt() << "  " << gjet.eta()<< endl;
             ev.jn_genUnfjpx[ev.jnUnf]      =  gjet.px();
             ev.jn_genUnfjpy[ev.jnUnf]      =  gjet.py();
             ev.jn_genUnfjpz[ev.jnUnf]      =  gjet.pz();
             ev.jn_genUnfjen[ev.jnUnf]      =  gjet.energy();
+            ev.jn_genUnfjhad[ev.jnUnf]     =  gjeti->hadEnergy();
+            ev.jn_genUnfjem[ev.jnUnf]      =  gjeti->emEnergy();
+
+            bool isChargedJet=false;
+            double chargedFraction = 0.;
+            std::vector<const GenParticle*> mcparticles = gjeti->getGenConstituents();
+            for(std::vector <const GenParticle*>::const_iterator thepart =mcparticles.begin();thepart != mcparticles.end(); ++ thepart ) {
+                if ( (**thepart).charge()!=0 ){
+                    isChargedJet=true;
+                    chargedFraction += (**thepart).pt();
+                }
+            }
+            if ( ! (isChargedJet > 0 ) ) cout << " is chargeid: " << isChargedJet << "   " << chargedFraction/gjet.pt()<<"   " << gjet.pt() <<"    " <<gjet.eta()<< endl;
+            ev.jn_genUnfjptcf[ev.jnUnf]      = chargedFraction/gjet.pt();
+
             ev.jnUnf++;	
         }
     }
