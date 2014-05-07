@@ -1,0 +1,6 @@
+*.pyc
+UserCode/llvv_fwk/test/grid/multicrab_VJets_DMu/
+UserCode/llvv_fwk/test/grid/multicrab_VJets_DE/
+UserCode/llvv_fwk/test/grid/multicrab_VJets_DY_Inclusive/
+UserCode/llvv_fwk/test/grid/multicrab_VJets_Background/
+UserCode/llvv_fwk/test/grid/multicrab_VJets_TTJets/
