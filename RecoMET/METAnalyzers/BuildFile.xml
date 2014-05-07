@@ -5,6 +5,3 @@
 <use   name="TrackingTools/TrackAssociator"/>
 <use   name="FWCore/Framework"/>
 <use   name="root"/>
-<export>
-  <lib   name="1"/>
-</export>
