@@ -1146,7 +1146,7 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
             if (trackBaseRef.isAvailable())
             {
                 float bestDz(9999.);
-                fori (size_t jVtx(0); jVtx < vtxH->size(); jVtx++)
+                for (size_t jVtx(0); jVtx < vtxH->size(); jVtx++)
                 {
                     const reco::VertexRef vtxref(vtxH, jVtx);
                     float vtxDz(fabs(trackBaseRef->dz(vtxref->position())));
