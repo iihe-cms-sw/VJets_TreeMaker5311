@@ -1,4 +1,6 @@
 *.pyc
+__init__.py
+crab.history
 UserCode/llvv_fwk/test/grid/multicrab_VJets_DMu/
 UserCode/llvv_fwk/test/grid/multicrab_VJets_DE/
 UserCode/llvv_fwk/test/grid/multicrab_VJets_DY_Inclusive/
