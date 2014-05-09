@@ -5,147 +5,179 @@
 # you can also give:  multicrab_ALL_MC_NTUPLES/DMu_2012A then it runs crab
 # hopefull useful !
 # for N-rechecks you need to set it in the external loop
+
 import os, sys, string
 import re
 
 
-print 'Number of arguments:', len(sys.argv), 'arguments.'
-print 'Argument List:', str(sys.argv)
+#---------------------------------------------------------------------------------------
+# colors for printing purposes
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
 
-if len(sys.argv) < 2 :
-	sys.exit("give me multicrab directory you want to run on")
+#---------------------------------------------------------------------------------------
 
-if not os.path.exists(sys.argv[1]):
-	sys.exit("this crab directory does not exist")
+#---------------------------------------------------------------------------------------
+# print errorMsg in red
+def printErr(errorMsg):
+    sys.exit(bcolors.FAIL + errorMsg + bcolors.ENDC)
 
-TempIn = sys.argv[1].strip("/").split("/")
-print TempIn
-print "lenght of input:", len(TempIn)
-isMultiCrab = 0
+#---------------------------------------------------------------------------------------
 
-if "multicrab" in sys.argv[1]:
-	isMultiCrab = 1
+#---------------------------------------------------------------------------------------
+# print infoMsg in green
+def printInfo(infoMsg):
+    print bcolors.OKGREEN + infoMsg + bcolors.ENDC
 
-if len(TempIn) > 1 :
-	print " found longer input"
-	isMultiCrab = 0
+#---------------------------------------------------------------------------------------
 
-print "is multicrab:", isMultiCrab
+#---------------------------------------------------------------------------------------
+# print execMsg in green
+def printExec(execMsg):
+    print bcolors.OKBLUE + execMsg + bcolors.ENDC
 
-CMDcrabGet = ""
-CMDcrabSta = ""
-CMDcrabRep = ""
+#---------------------------------------------------------------------------------------
 
-fileOut = TempIn[0] + ".txt"
-cmdRm = "rm -f " + fileOut
-os.system(cmdRm)
+#---------------------------------------------------------------------------------------
+def resubmission(crabDirectory):
+    # look for subdirectories indicating if it is a multicrab or not
+    dirPath = sys.argv[1].strip("/")
+    isMultiCrab = (len(dirPath.split("/")) == 1)
 
-if (isMultiCrab):
-	print "lets do multicrab"
-	CMDcrabGet = "multicrab -get -c " + sys.argv[1]
-	CMDcrabSta = "multicrab -status -c " + sys.argv[1] + " > " + fileOut
-	CMDcrabRep = "multicrab -report -c " + sys.argv[1]
-else:
-	print "lets do crab"
-	CMDcrabGet = "crab -get -c " + sys.argv[1]
-	CMDcrabSta = "crab -status -c " + sys.argv[1] + " > " + fileOut
-	CMDcrabRep = "crab -report -c " + sys.argv[1]
+    printInfo("is multicrab: " + str(isMultiCrab))
 
-cmdport = "export GLOBUS_TCP_PORT_RANGE=\"22236,25000\""
-os.system(cmdport)
+    # output name for the status file
+    status = dirPath + ".status"
 
-print CMDcrabGet
-#os.system(CMDcrabGet)
-print CMDcrabSta
-os.system(CMDcrabSta)
-print " WE HAVE STATUS"
-print CMDcrabRep
-#os.system(CMDcrabRep)
-#print " WE HAVE REPORT"
+    # create some commands for later use (or not)
+    cmdCrabGet = ""
+    cmdCrabSta = ""
+    cmdCrabRep = ""
 
-statusFile = open(fileOut, "r")
-error = False
-Aborted = False
-Cancelled = False
-#cmd = 'crab -resubmit '
-cmd = 'crab -forceResubmit '
-dirCrab = ''
+    if (isMultiCrab):
+    	cmdCrabGet = "multicrab -get -c " + dirPath
+    	cmdCrabSta = "multicrab -status -c " + dirPath + " > " + status
+    	cmdCrabRep = "multicrab -report -c " + dirPath
+    else:
+    	cmdCrabGet = "crab -get -c " + dirPath
+    	cmdCrabSta = "crab -status -c " + dirPath + " > " + status
+    	cmdCrabRep = "crab -report -c " + dirPath
 
-for line in statusFile:
+    # little magic
+    cmdport = "export GLOBUS_TCP_PORT_RANGE=\"22236,25000\""
+    printExec("Executing " + cmdport)
+    os.system(cmdport)
 
-    # Get the working directory. Second passage is the right one.
-    if "working directory" in line:
-        print " lets get our directory"
-        dirCrab = line.split("working directory")[1].strip()
-        continue
-
-    # Quit if erver is unable to connect
-    if "Server status decoding problem" in line:
-        print "Server status decoding problem, lets skip resubmiting"
-        break
-
-    # Fetch the summary line, exit code, and number of jobs with this exit code
-    # set the error flag to true
-    if "Jobs with Wrapper Exit Code" in line:
-        print line.strip()
-        splitter = re.compile(r'\d+')
-        match1 = splitter.findall(line)
-        if int(match1[0]) > 0:
-            if int(match1[1]) > 0:
-                print "Following error found ", match1[1], " total ", match1[0], " times"
-                error = True
-
-    # When error exit code have been read, proceed to resubmission
-    if error:
-        jobsRes = ""
-        if "List" in line:
-            jobsRes = line.split(":")[1].strip()
-            print cmd + jobsRes + " -c " + dirCrab
-            os.system(cmd + jobsRes + " -c " + dirCrab)
-            error = False
+    # get the status
+    cmdRm = "rm -f " + status
+    printExec("Executing " + cmdRm)
+    os.system(cmdRm)
+    printExec(cmdCrabSta)
+    os.system(cmdCrabSta)
 
 
-    # Check the list of aborted jobs
-    if "Jobs Aborted" in line:
-        splitter = re.compile(r'\d+')
-        match1 = splitter.findall(line)
-        if int(match1[0]) > 0:
-            print "Aborted jobs ", match1[0], " times"
-            Aborted = True
+    statusFile = open(status, "r")
+    error = False
+    Aborted = False
+    Cancelled = False
+    #cmd = 'crab -resubmit '
+    cmd = 'crab -forceResubmit '
+    dirCrab = ''
 
-    # and resubmit
-    if Aborted:
-        jobsRes = ""
-        if "List" in line:
-            if "resubmit" in line:
-		        print "\n"
-            else:
+    for line in statusFile:
+
+        # Get the working directory. Second passage is the right one.
+        if "working directory" in line:
+            dirCrab = line.split("working directory")[1].strip()
+            continue
+
+        # Quit if erver is unable to connect
+        if "Server status decoding problem" in line:
+            printErr("Server status decoding problem, lets skip resubmiting")
+            break
+
+        # Fetch the summary line, exit code, and number of jobs with this exit code
+        # set the error flag to true
+        if "Jobs with Wrapper Exit Code" in line:
+            print line.strip()
+            splitter = re.compile(r'\d+')
+            match1 = splitter.findall(line)
+            if int(match1[0]) > 0:
+                if int(match1[1]) > 0:
+                    print "Following error found ", match1[1], " total ", match1[0], " times"
+                    error = True
+
+        # When error exit code have been read, proceed to resubmission
+        if error:
+            jobsRes = ""
+            if "List" in line:
                 jobsRes = line.split(":")[1].strip()
-                print cmd + jobsRes + " -c " + dirCrab
-                #os.system(cmd + jobsRes + " -c " + dirCrab)
-                Aborted = False
-
-
-    if "Jobs Cancelled"  in line:
-        print line.strip()
-        splitter = re.compile(r'\d+')
-        match1 = splitter.findall(line)
-        print match1
-        if int(match1[0]) > 0:
-            print "Cancelled jobs ", match1[0], " times"
-            Cancelled = True
-
-    if Cancelled:
-        jobsRes = ""
-        if "List" in line:
-            if "resubmit" in line:
-                print "\n"
-            else:
-                jobsRes = line.split(":")[1].strip()
-                print cmd + jobsRes + " -c " + dirCrab
+                printExec("Executing: " + cmd + jobsRes + " -c " + dirCrab)
                 os.system(cmd + jobsRes + " -c " + dirCrab)
-                Cancelled = False
+                error = False
 
 
-print "\nONE MORE RESUBMITION DONE"
+        # Check the list of aborted jobs
+        if "Jobs Aborted" in line:
+            splitter = re.compile(r'\d+')
+            match1 = splitter.findall(line)
+            if int(match1[0]) > 0:
+                print "Aborted jobs ", match1[0], " times"
+                Aborted = True
 
+        # and resubmit
+        if Aborted:
+            jobsRes = ""
+            if "List" in line:
+                if "resubmit" in line:
+    		        print "\n"
+                else:
+                    jobsRes = line.split(":")[1].strip()
+                    printExec("Executing " + cmd + jobsRes + " -c " + dirCrab)
+                    os.system(cmd + jobsRes + " -c " + dirCrab)
+                    Aborted = False
+
+
+        if "Jobs Cancelled"  in line:
+            print line.strip()
+            splitter = re.compile(r'\d+')
+            match1 = splitter.findall(line)
+            print match1
+            if int(match1[0]) > 0:
+                print "Cancelled jobs ", match1[0], " times"
+                Cancelled = True
+
+        if Cancelled:
+            jobsRes = ""
+            if "List" in line:
+                if "resubmit" in line:
+                    print "\n"
+                else:
+                    jobsRes = line.split(":")[1].strip()
+                    printExec("Executing " + cmd + jobsRes + " -c " + dirCrab)
+                    os.system(cmd + jobsRes + " -c " + dirCrab)
+                    Cancelled = False
+
+
+    print "\nOne more resubmition done"
+
+#---------------------------------------------------------------------------------------
+
+
+# check the crab directory
+if len(sys.argv) < 2:
+    errorMsg = "Error: no argument has been provided\n"
+    errorMsg += "Please give the multicrab directory you want to run on\n"
+    printErr(errorMsg)
+elif not os.path.exists(sys.argv[1]):
+    errorMsg = "Error: crab directory does not exist\n"
+    printErr(errorMsg)
+else:
+    printInfo("Start resubmission for directory " + sys.argv[1])
+
+resubmission(sys.argv[1])
