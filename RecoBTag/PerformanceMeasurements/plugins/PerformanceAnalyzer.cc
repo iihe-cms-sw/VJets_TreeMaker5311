@@ -1264,7 +1264,6 @@ PerformanceAnalyzer::analyze(const Event& iEvent, const EventSetup& iSetup)
         bool gotJP       = false;
         bool gotJPneg    = false;
         bool gotJPpos    = false;
-        bool gotSMT      = false;
         bool gotMTCHE     = false;
         bool gotMTCHP     = false;
 
@@ -1456,8 +1455,6 @@ PerformanceAnalyzer::analyze(const Event& iEvent, const EventSetup& iSetup)
             {
 
                 fS8evt->btag_SoftMuon_disc.push_back( (*jetTags)[ith_tagged].second);
-
-                gotSMT = true;
 
             }
 

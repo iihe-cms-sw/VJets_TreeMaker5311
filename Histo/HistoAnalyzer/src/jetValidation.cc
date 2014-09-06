@@ -260,7 +260,6 @@ jetValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 // study on  R E J E C T E D  jets ****************************************************************
 //------------------------------------------------------------------------------------------------- 
       if (doPlotsJetComposition){
-	 double jetEn,jetEta;
 	 int sizeRJ=0;
 	 bool ckElInJet = true;
 	 for (reco::PFJetCollection::const_iterator jet = pfJets->begin(); 
@@ -438,8 +437,6 @@ jetValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 		     if (dist < maxDist && dist < nearerDist){
 			nearerDist = dist;
 			pdgValue= itgen->pdgId();
-			jetEn=itgen->pt();
-			jetEta=itgen->eta();
 			checkNear=true;
 		     }	       
 		  } // end genParticle
@@ -1309,11 +1306,9 @@ double jetValidation::evaluateJECUncertainties(double jetpt,double jeteta){
 
 int jetValidation::isTauOrMu(edm::Handle<GenParticleCollection> genParticlesCollection)
 {
-   bool theFilter=false;
    int ntausFromZ(0);
    int ntaus(0);
    int nmuFromZ(0);
-   int nmu(0);
 
    std::vector<std::pair<int,math::XYZTLorentzVectorD> > idAndPTaus;
    math::XYZTLorentzVectorD pTauPos, pTauNeg, pZTauTau;
@@ -1367,13 +1362,11 @@ int jetValidation::isTauOrMu(edm::Handle<GenParticleCollection> genParticlesColl
    }//end loop over genParticles
    
    if(ntausFromZ==2){
-     theFilter=true;
      pZTauTau=pTauNeg+pTauPos;
      return 1;
    }
    
    if(nmuFromZ==2){
-     theFilter=true;
      pZMuMu=pMuNeg+pMuPos;
      return 2;
    }

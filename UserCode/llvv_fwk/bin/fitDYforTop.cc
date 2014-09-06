@@ -361,14 +361,10 @@ int main(int argc,char *argv[])
 	  constrShapeModelMC.fitTo(*sumMC,Extended(kTRUE),SumW2Error(kTRUE), Constrain(nother),Save(kTRUE));
 
 	  if(ivar==0) nominalMCSF=ndysf.getVal();
-	  Double_t relDifference(nominalMCSF);
-	  relDifference=(ndysf.getVal()/nominalMCSF-1)*100;
 	  Double_t absDifference(ndysf.getVal()-nominalMCSF);
 	 
 	  //report the result
 	  char resBuf[1000];
-	  //if(ivar==0) sprintf(resBuf," Nominal: %3.4f",      relDifference);
-	  //else        sprintf(resBuf," %s variation %3.4f",systVars[ivar].Data(),relDifference);
 	  if(ivar==0) sprintf(resBuf," Nominal: %3.4f",      absDifference);
 	  else        sprintf(resBuf," %s variation %3.4f",systVars[ivar].Data(),absDifference);
 	  report << resBuf << endl;

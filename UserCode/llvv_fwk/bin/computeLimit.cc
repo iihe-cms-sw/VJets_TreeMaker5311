@@ -367,7 +367,6 @@ int main(int argc, char* argv[])
   const size_t nsh=sh.size();
   for(size_t i=0; i<nch; i++){
      for(size_t b=0; b<AnalysisBins.size(); b++){
-       int indexcut_ = indexcut; double cutMin=shapeMin; double cutMax=shapeMax;
         for(size_t j=0; j<nsh; j++){
            if(indexvbf>=0 && AnalysisBins[b].Contains("vbf")){
               vbfchannelsAndShapes.push_back((ch[i]+TString(";")+AnalysisBins[b]+TString(";")+sh[j]).Data());

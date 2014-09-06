@@ -265,7 +265,7 @@ reclusVal::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 //------------------------------------------------------------------------------------------------- 
 // study on BEFORE VETO  jets *************************************************************************
 //-------------------------------------------------------------------------------------------------
-      double deltaEJ, deltaEE;
+      double deltaEJ;
       double deltaPhi;
       dist1=999;
       dist2=999;
@@ -275,15 +275,11 @@ reclusVal::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	 deltaEJ= distR(e1,(*jet));
 	 //cout <<"dist calcolata con la funzione = "<< deltaEJ<< " ; calcolata a mano = "<<
 	 // sqrt(pow(e1.Phi()-jet->Phi(),2)+ pow(e1.Eta()-jet->Eta(),2))<< endl;
-	 deltaEE = distR(e2,(*jet));
-	 //if (deltaEJ<dist1 && deltaEE>0.3){
 	 if (deltaEJ<dist1){
 	    jet1=*jet;
 	    dist1 = deltaEJ;
 	 }
 	 deltaEJ= distR(e2,(*jet));
-	 deltaEE = distR(e1,(*jet));
-	 //if (deltaEJ<dist2 && deltaEE>0.3){
 	 if (deltaEJ<dist2){
 	    jet2=*jet;
 	    dist2 = deltaEJ;

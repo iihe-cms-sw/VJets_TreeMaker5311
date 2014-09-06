@@ -584,7 +584,6 @@ void MistagAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   iEvent.getByLabel(primaryVertexColl_,primaryVertex);
   
   const  reco::Vertex  *pv;
-  bool newvertex = false;
   
   bool pvFound = (primaryVertex->size() != 0);
   if ( pvFound ) {
@@ -597,7 +596,6 @@ void MistagAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     e(2,2)=15.*15.;
     reco::Vertex::Point p(0,0,0);
     pv=  new reco::Vertex(p,e,1,1,1);
-    newvertex = true;
   }
   GlobalPoint Pv_point = GlobalPoint((*pv).x(), (*pv).y(), (*pv).z());
   PVz = (*primaryVertex)[0].z();
@@ -637,7 +635,6 @@ void MistagAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     if ( !foundNames ) cout << "Could not get trigger names!\n";
     if ( tr.size() != triggerList.size() ) cout << "ERROR: length of names and paths not the same: " << triggerList.size() << "," << tr.size() << endl;
   
-    int NoJetID = 0;
     for (unsigned int i=0; i< tr.size(); i++) {
     if ( !tr[i].accept() == 1 ) continue;
 

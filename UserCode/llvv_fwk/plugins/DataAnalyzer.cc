@@ -712,7 +712,6 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
             (ele->ecalDrivenSeed()                                                                                  << 0)
             | ( ele->trackerDrivenSeed()                                                                            << 1)
             | ( EgammaCutBasedEleId::PassEoverPCuts(ev.egn_sceta[ev.egn],ev.egn_eopin[ev.egn],ev.egn_fbrem[ev.egn]) << 2);
-        bool passesMediumID(0);
         for (size_t iid(0); iid < 4; iid++)
         {
             int id(EgammaCutBasedEleId::VETO);
@@ -721,15 +720,14 @@ void DataAnalyzer::analyze(const edm::Event &event, const edm::EventSetup &iSetu
             if (iid == 3) id = EgammaCutBasedEleId::TIGHT;
 
             // implentation of ID using info stored in PAT collection -- Should not be used ?
-            bool hasId1=EgammaCutBasedEleId::PassWP( EgammaCutBasedEleId::WorkingPoint(id), ele->isEB(), ele->pt(), ele->eta(), 
-                    ev.egn_detain[ev.egn], ev.egn_dphiin[ev.egn], ev.egn_sihih[ev.egn], ev.egn_hoe[ev.egn], ev.egn_ooemoop[ev.egn], 
-                    ev.ln_d0[ev.ln], ev.ln_dZ[ev.ln], 
-                    0., 0., 0., ev.egn_isConv[ev.egn], ev.ln_trkLostInnerHits[ev.ln], *rho);
+            //bool hasId1=EgammaCutBasedEleId::PassWP( EgammaCutBasedEleId::WorkingPoint(id), ele->isEB(), ele->pt(), ele->eta(), 
+            //        ev.egn_detain[ev.egn], ev.egn_dphiin[ev.egn], ev.egn_sihih[ev.egn], ev.egn_hoe[ev.egn], ev.egn_ooemoop[ev.egn], 
+            //        ev.ln_d0[ev.ln], ev.ln_dZ[ev.ln], 
+            //        0., 0., 0., ev.egn_isConv[ev.egn], ev.ln_trkLostInnerHits[ev.ln], *rho);
 
             // hasId -- I think this is the implemntation from EGamma ????
             bool  hasId = EgammaCutBasedEleId::PassWP( EgammaCutBasedEleId::WorkingPoint(id) , gsfele, convH, *beamSpotH, vtxH, (const double) 0,    (const double) 0, (const double) 0, *rho);
             if (iid == 0) hasVetoId=hasId;
-            if (iid == 2 && hasId) passesMediumID = true ;
             ev.ln_idbits[ev.ln] |=  (hasId << (3 + iid));
         }
 

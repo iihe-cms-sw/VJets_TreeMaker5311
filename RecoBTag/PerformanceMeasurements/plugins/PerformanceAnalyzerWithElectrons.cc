@@ -1362,7 +1362,6 @@ PerformanceAnalyzerWithElectrons::analyze(const Event& iEvent, const EventSetup&
         bool gotJP       = false;
         bool gotJPneg    = false;
         bool gotJPpos    = false;
-        bool gotSMT      = false;
         bool gotMTCHE     = false;
         bool gotMTCHP     = false;
 
@@ -1555,7 +1554,6 @@ PerformanceAnalyzerWithElectrons::analyze(const Event& iEvent, const EventSetup&
 
                 fS8evt->btag_SoftElectron_disc.push_back( (*jetTags)[ith_tagged].second);
 
-                gotSMT = true;
 
             }
 

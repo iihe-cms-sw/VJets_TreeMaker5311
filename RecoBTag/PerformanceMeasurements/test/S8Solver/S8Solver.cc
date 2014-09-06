@@ -136,7 +136,6 @@ void S8Solver::LoadHistos()
     // rebin correlation factors
     const int ncorrptarray = 3;
     const int ncorretaarray = 3;
-    Double_t corrptbins[ncorrptarray] = {30., 80.,230.};
     Double_t corretabins[ncorrptarray] = {0.,1.5,2.5};
 
     // recalculate correlation factors

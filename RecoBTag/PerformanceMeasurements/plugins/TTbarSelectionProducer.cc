@@ -107,22 +107,17 @@ TTbarSelectionProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
    //get bField
    //------------------------------------------
    
-   float bField;
    
    if(isData_){
    
      edm::Handle<DcsStatusCollection> dcsHandle;
      iEvent.getByLabel("scalersRawToDigi", dcsHandle);
      
-     float currentToBFieldScaleFactor = 2.09237036221512717e-04;
-     float current = (*dcsHandle)[0].magnetCurrent();
-     bField = current*currentToBFieldScaleFactor;
      
    }else{
      
       edm::ESHandle<MagneticField> magneticField;
       iSetup.get<IdealMagneticFieldRecord>().get(magneticField);
-      bField = magneticField->inTesla(GlobalPoint(0.,0.,0.)).z();
    }
 
    //std::cout << "get bFiled : done " << std::endl;
@@ -240,7 +235,6 @@ TTbarSelectionProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
 
 /*
        ConversionFinder convFinder;
-       ConversionInfo convInfo = convFinder.getConversionInfo(*patelec, tracks, bField);
 
        //std::cout << " conversion " << convInfo.dist() << " " << convInfo.dcot() << " " <<  patelec->gsfTrack()-> trackerExpectedHitsInner().numberOfLostHits() << std::endl;
 

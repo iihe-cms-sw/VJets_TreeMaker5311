@@ -274,7 +274,6 @@ Int_t S8NumericSolver::FindSolution(Double_t* res, int n)
     int npositiveSols = 0;
     int nphysicalSols = 0;
     int thesols = -1;
-    int thesols2 = -1;
     double deltares = 9999999;
 
     if (fForceSol)
@@ -372,7 +371,6 @@ Int_t S8NumericSolver::FindSolution(Double_t* res, int n)
             tmpsol[4]>tmpsol[5] &&
             tmpsol[2]>tmpsol[3])
 
-            thesols2= j-1;
         
         if (fverbose)
         {
@@ -385,16 +383,6 @@ Int_t S8NumericSolver::FindSolution(Double_t* res, int n)
     if (nphysicalSols==0)
     {
         return 0;
-        /*
-        if ( thesols2 != -1 )
-        {
-            fNb = res[thesols2];
-            for(int i=0; i<8;++i)
-                fMapResult[i] =  fResult[i] = E(i%2,i/2);
-        }
-        else
-            return 0;
-        */
     }
     else
     {

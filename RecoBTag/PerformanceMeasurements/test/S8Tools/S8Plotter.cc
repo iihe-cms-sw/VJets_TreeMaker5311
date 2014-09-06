@@ -412,15 +412,12 @@ void S8Plotter::Loop()
 		int JetFlavor = -1;
 		//int OppJetFlavor = -1;
 				
-		int ntagtracks = 0;
 		////////// Loop over jets ////////////////////////
 		for ( int ijet =0; ijet != vec_size; ++ijet) {
 
-			ntagtracks = fS8evt->jet_ntrks[ijet]; //taggability
 			h1["jet_ntrks"]->Fill(fS8evt->jet_ntrks[ijet]);
 			double jetcorr = fS8evt->jetcorrection[ijet];
 						
-			//if ( fS8evt->jet_hasLepton[ijet] == 1 && ntagtracks>=1 ) { // no taggability for the moment
 			
 			//isMuonJetSample = true;
 				
@@ -664,10 +661,6 @@ void S8Plotter::Loop()
 								  vmu.SetPtEtaPhiE(oMuons.pt[ith_omu_highest_pt], Muons.eta[ith_omu_highest_pt], Muons.phi[ith_omu_highest_pt], Muons.e[ith_omu_highest_pt]);
 								  
 								  vtot = vmu + p4MuJet;
-								  double optrel = ( vmu.Px() * vtot.Px()
-													+ vmu.Py() * vtot.Py()
-													+ vmu.Pz() * vtot.Pz() ) / vtot.P();
-								  optrel = TMath::Sqrt( vmu.P() * vmu.P() - ptrel * ptrel );
 								  // do we need ptrel of this muon?
 								  
 								  // check btagging

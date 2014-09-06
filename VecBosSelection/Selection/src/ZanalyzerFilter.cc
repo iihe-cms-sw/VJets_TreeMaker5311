@@ -161,8 +161,6 @@ ZanalyzerFilter::filter (edm::Event & iEvent, edm::EventSetup const & iSetup)
 	
   //===========================
 
-  bool isBarrelElectrons;
-  bool isEndcapElectrons;
   bool isIsolatedBarrel;
   bool isIDBarrel;
   bool isConvertedBarrel;
@@ -238,8 +236,6 @@ ZanalyzerFilter::filter (edm::Event & iEvent, edm::EventSetup const & iSetup)
 
     //quality flags
 
-    isBarrelElectrons = false;
-    isEndcapElectrons = false;
     isIsolatedBarrel = false;
     isIDBarrel = false;
     isConvertedBarrel = false;

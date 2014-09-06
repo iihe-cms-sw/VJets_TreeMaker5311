@@ -59,7 +59,6 @@ goodEPairProducer2011::produce(edm::Event & iEvent, edm::EventSetup const & iSet
       pat::ElectronCollection::const_iterator highestptele;
       pat::ElectronCollection::const_iterator secondptele;
       
-      double secondEleEnThrhold=secondEleEnThrhold_;
       double firstEleEnThrhold=firstEleEnThrhold_;  
       double lowZmassLimit=lowZmassLimit_;
       double highZmassLimit=highZmassLimit_;
@@ -107,42 +106,22 @@ goodEPairProducer2011::produce(edm::Event & iEvent, edm::EventSetup const & iSet
 	// Here you get a plot full of information. Each electron contributes with one entry (so total numer of entries = 3* #electrons)
 	// To have the "%", each bin value shold be divided by total numer of entries/3
 	std::vector<bool> result=SelectionUtils::MakePfEleNewIDAnalysis(recoElectron,iEvent,useNewID_,doWP90_,conversions_h,beamSpot,vtx_h, isoVals);
-//	passIDEleCriteria->SetBinContent(1,passIDEleCriteria->GetBinContent(1)+1);
 	if (result[0]) {
-//	  passIDEleCriteria->SetBinContent(2,passIDEleCriteria->GetBinContent(2)+1);
 	  if (isIso<2) isIso++;
 	}
 	if (result[1]) {
-//	  passIDEleCriteria->SetBinContent(3,passIDEleCriteria->GetBinContent(3)+1);
 	  if (isID<2) isID++;
 	}
 	if (result[2]) {
-//	  passIDEleCriteria->SetBinContent(4,passIDEleCriteria->GetBinContent(4)+1);
 	  if (isConv<2) isConv++;
 	}
-//	if (isID==2) eleSelStepByStep->SetBinContent(6,eleSelStepByStep->GetBinContent(6)+1); // (5) + 2 ele pt > lowTh (6)
-//	if (isID==2 && isIso==2) eleSelStepByStep->SetBinContent(7,eleSelStepByStep->GetBinContent(7)+1); // (5) + 2 ele pt > lowTh (6)
-//	if (isID==2 && isIso==2 && isConv==2) eleSelStepByStep->SetBinContent(8,eleSelStepByStep->GetBinContent(8)+1); // (5) + 2 ele pt > lowTh (6)
 	
 	if (result[0] && result[1] && result[2]) WP80Count++;
-//	if (WP80Count==2) eleSelStepByStep->SetBinContent(9,eleSelStepByStep->GetBinContent(9)+1); //(4) + 2 ele WP80 (5)
 
-//// part bellow was used to select two electron you want to remove from collection
-/*        if ( (!doID_ || ( (!useNewID_ && ((doWP90_ || SelectionUtils::DoWP80Pf(recoElectron,iEvent)) &&
-                                          (!doWP90_ || SelectionUtils::DoWP90Pf(recoElectron,iEvent))) )
-                          || (useNewID_ && SelectionUtils::DoMedSel2011(recoElectron,iEvent,conversions_h,beamSpot,vtx_h))) )
-             && ( !doIsolation_ || SelectionUtils::DoIso2011(recoElectron, iEvent, isoVals))
-             && SelectionUtils::DoHLTMatch(recoElectron,iEvent) && recoElectron->pt()>secondEleEnThrhold){
-*/
-
-// seva: I removed the above part bot to use electron ID here for now, not sure there is a (we usually get only 2 oposite sign electrons	
 	  if (doID_){
-//	  cout<<"DO ID"<<endl;
 	  lowThrholdCount++;
 	  if (lowThrholdCount==2)
-//	    eleSelStepByStep->SetBinContent(10,eleSelStepByStep->GetBinContent(10)+1); // (5) + 2 ele pt > lowTh (6)
 	  if (Debug2) cout<<"Tag is a WP80 electron..."<<endl;
-//	 cout<<recoElectron->charge()<<"   "<<recoElectron->pt()<<endl; 
 	  //Sort in Pt
 	  if (Debug2) cout<<"Electron pt value ->"<<recoElectron->pt()<<endl;
 	  if (Debug2) cout<<" MMMM ele trigger size "<<recoElectron->triggerObjectMatches().size()<<endl;
@@ -158,28 +137,6 @@ goodEPairProducer2011::produce(edm::Event & iEvent, edm::EventSetup const & iSet
 			}
 		}
 	  
-/*
-	  if (i==1){
-            if (highestptele->pt()<recoElectron->pt()){
-              secondptele=highestptele;
-              highestptele=recoElectron;
-            }
-            else{
-              secondptele=recoElectron;
-            }
-          }
-
-	  if (i>1){
-	    if (highestptele->pt()<recoElectron->pt()){
-	      secondptele=highestptele;
-	      highestptele=recoElectron;
-	    }
-	    else{countSecond=1;
-	      if (secondptele->pt()<recoElectron->pt()) secondptele=recoElectron;
-	    }
-	  }
-
-*/
 	  i++;
 	} 
 	

@@ -464,7 +464,6 @@ int main (int argc, char* argv[])
             // find away jet
             ////////////////////////////
             bool AwayTaggedJet = false;
-            bool AwayMuonJet = false;
             TLorentzVector p4AwayMuon;
             TLorentzVector p4AwayTagged;
         

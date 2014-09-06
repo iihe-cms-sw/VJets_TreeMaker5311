@@ -30,7 +30,6 @@ goodEleProducer::produce(edm::Event & iEvent, edm::EventSetup const & iSetup)
 
   if (electronCollection.isValid () && electronCollection->size()>1){
 
-     int i=0;
      bool protection=false;
      int jj=0;
      int sizePat=electronCollection->size();

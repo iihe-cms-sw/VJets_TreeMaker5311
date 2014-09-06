@@ -1,6 +1,7 @@
 #ifndef macroutils_h
 #define macroutils_h
 
+#include "DataFormats/Math/interface/deltaPhi.h"
 
 #include "DataFormats/FWLite/interface/Handle.h"
 #include "DataFormats/FWLite/interface/Event.h"
